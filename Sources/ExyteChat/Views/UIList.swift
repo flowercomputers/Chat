@@ -513,7 +513,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
                     sectionHeaderViewBuilder(section)
                     .rotationEffect(Angle(degrees: (type == .conversation ? 180 : 0)))
             ).view
-            header?.backgroundColor = UIColor(mainBackgroundColor)
+            header?.backgroundColor = .clear
             return header
         }
 
