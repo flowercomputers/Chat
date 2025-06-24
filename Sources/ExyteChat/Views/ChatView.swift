@@ -320,7 +320,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                                 .stroke(Color.primary.opacity(0.12), lineWidth: 0.6)
                         )
                         .shadow(color: colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.06), radius: 6, x: 1, y: 5)
-                        .modifier(GlassEffectIfAvailable())
+                        // .modifier(GlassEffectIfAvailable())
                 }
                 .padding(8)
                 .opacity(isScrolledToBottom ? 0 : 1)  // Animate opacity
@@ -750,12 +750,12 @@ extension ChatView {
     }
 }
 
-private struct GlassEffectIfAvailable: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content.glassEffect(.regular.interactive())
-        } else {
-            content
-        }
-    }
-}
+// private struct GlassEffectIfAvailable: ViewModifier {
+//     func body(content: Content) -> some View {
+//         if #available(iOS 26.0, *) {
+//             content.glassEffect(.regular.interactive())
+//         } else {
+//             content
+//         }
+//     }
+// }
