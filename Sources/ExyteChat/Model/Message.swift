@@ -56,6 +56,7 @@ public struct Message: Identifiable, Hashable, Sendable {
     public var recording: Recording?
     public var replyMessage: ReplyMessage?
     public var type: MessageType
+    public var flagged: Bool
 
     public var triggerRedraw: UUID?
 
@@ -69,8 +70,8 @@ public struct Message: Identifiable, Hashable, Sendable {
                 reactions: [Reaction] = [],
                 recording: Recording? = nil,
                 replyMessage: ReplyMessage? = nil,
-                type: MessageType = .message) {
-
+                type: MessageType = .message,
+                flagged: Bool = false) {
         self.id = id
         self.user = user
         self.status = status
@@ -82,6 +83,7 @@ public struct Message: Identifiable, Hashable, Sendable {
         self.recording = recording
         self.replyMessage = replyMessage
         self.type = type
+        self.flagged = flagged
     }
 
     public static func makeMessage(
@@ -139,7 +141,8 @@ extension Message: Equatable {
         lhs.reactions == rhs.reactions &&
         lhs.recording == rhs.recording &&
         lhs.replyMessage == rhs.replyMessage &&
-        lhs.type == rhs.type
+        lhs.type == rhs.type &&
+        lhs.flagged == rhs.flagged
     }
 }
 
