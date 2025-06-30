@@ -210,4 +210,5 @@ public enum MessageType: String, Codable, Sendable {
     case left
     case created
     case renamed
+    case typing
 }
