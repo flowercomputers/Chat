@@ -125,6 +125,7 @@ struct InputView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
         }
+        // TODO: Figure out how to nix the background color of the input area
         // .background(backgroundColor)
         .onAppear {
             viewModel.recordingPlayer = recordingPlayer
