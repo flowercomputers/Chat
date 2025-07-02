@@ -393,6 +393,17 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             ids: ids,
             listSwipeActions: listSwipeActions
         )
+        // Starting with iOS 26 the default scroll-edge effect for tables was changed to
+        // `.expand`, which produces a full-screen blur when the user over-scrolls.  For
+        // chat UIs this feels wrong and, in our case, practically hides everything.
+        // We explicitly revert to the familiar glow effect when the API is available.
+        .applyIf(true) { view in
+            if #available(iOS 26.0, *) {
+                view.scrollEdgeEffectStyle(.glow, for: .vertical)
+            } else {
+                view
+            }
+        }
         .applyIf(!isScrollEnabled) {
             $0.frame(height: tableContentHeight)
         }
