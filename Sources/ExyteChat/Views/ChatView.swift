@@ -269,7 +269,6 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
         // I'd like it to, but the message area and footer/input bar are 
         // squished to the top of the screen, leaving a bunch of empty space 
         //at the bottom of the view.
-        // ScrollView { 
 
         // NOTE: editing this spacing to 0 explicitly helped
         // eliminate the gap betweem the input view and the message view. 
@@ -293,8 +292,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                 }
                 listWithButton
             }
-        //}
-        
+        }
         // Used to prevent ChatView movement during Emoji Keyboard invocation
         .ignoresSafeArea(isShowingMenu ? .keyboard : [])
     }
