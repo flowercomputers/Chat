@@ -267,6 +267,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
         // eliminate the gap betweem the input view and the message view. 
         // Still need to work through how to get the message list to extend 
         // "under" the input and top header toolbar area.
+        ScrollView { 
         VStack(spacing: 0) {
             if showNetworkConnectionProblem, !networkMonitor.isConnected {
                 waitingForNetwork
@@ -285,6 +286,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                 }
                 listWithButton
             }
+        }
         }
         // Used to prevent ChatView movement during Emoji Keyboard invocation
         .ignoresSafeArea(isShowingMenu ? .keyboard : [])
