@@ -174,6 +174,13 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
 
     public var body: some View {
         mainView
+            // NOTE: This background appears to set the color of the surface that the
+            // message list rests atop of. Strangely, with the way Excyte is structured,
+            // This background is affecting the color of the top toolbar area, and the footer!
+            // Roughly, it seems like the header, message area, and footer, are part of something
+            // like a VStack, so they lie "next" to one another on the same place, which isn't
+            // what we want! We're trying to get a similar feeling as Apple Messages, where
+            // the content flows "under" the top toolbar area, and the footer.
             .background(Color.clear)
             .environmentObject(keyboardState)
 
@@ -308,7 +315,6 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
         case .conversation:
             ZStack(alignment: .bottom) {
                 list
-
                 // Button is always present, opacity controlled by state
                 Button {
                     NotificationCenter.default.post(name: .onScrollToBottom, object: nil)
