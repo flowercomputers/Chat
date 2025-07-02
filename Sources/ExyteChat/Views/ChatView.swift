@@ -399,7 +399,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
         // We explicitly revert to the familiar glow effect when the API is available.
         .applyIf(true) { view in
             if #available(iOS 26.0, *) {
-                view.scrollEdgeEffectStyle(.glow, for: .vertical)
+                view.scrollEdgeEffectStyle(.soft, for: .vertical)
             } else {
                 view
             }
