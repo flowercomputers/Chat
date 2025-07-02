@@ -174,7 +174,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
 
     public var body: some View {
         mainView
-            .background(chatBackground())
+            .background(Color.purple)
             .environmentObject(keyboardState)
 
             .fullScreenCover(isPresented: $viewModel.fullscreenAttachmentPresented) {
@@ -256,6 +256,10 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var mainView: some View {
+        // NOTE: editing this spacing to 0 explicitly helped
+        // eliminate the gap betweem the input view and the message view. 
+        // Still need to work through how to get the message list to extend 
+        // "under" the input and top header toolbar area.
         VStack(spacing: 0) {
             if showNetworkConnectionProblem, !networkMonitor.isConnected {
                 waitingForNetwork
