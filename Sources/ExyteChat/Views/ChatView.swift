@@ -262,32 +262,59 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             }
     }
 
+    @ViewBuilder
     var mainView: some View {
-        // NOTE: editing this spacing to 0 explicitly helped
-        // eliminate the gap betweem the input view and the message view. 
-        // Still need to work through how to get the message list to extend 
-        // "under" the input and top header toolbar area.
-        VStack(spacing: 0) {
-            if showNetworkConnectionProblem, !networkMonitor.isConnected {
-                waitingForNetwork
-            }
+        // When the list should appear "behind" (i.e. under-scroll) the header and
+        // the bottom input area ‑ the common case for a conversation UI – we rely
+        // on `safeAreaInset` to overlay the auxiliary chrome instead of laying
+        // everything out in a `VStack`.  This allows the table view to take the
+        // whole screen height and scroll freely under the insets, exactly like
+        // Apple Messages.
 
-            if isListAboveInputView {
-                listWithButton
-                if let builder = betweenListAndInputViewBuilder {
-                    builder()
+        if isListAboveInputView {
+            listWithButton
+                // Let the content flow under the navigation bar.
+                .ignoresSafeArea(edges: [.top])
+
+                // Overlay the bottom input (and an optional spacer view supplied
+                // by the host app) *on top* of the scrolling content while
+                // simultaneously reserving the needed bottom padding so that the
+                // last message is still fully visible when scrolled to the end.
+                .safeAreaInset(edge: .bottom) {
+                    VStack(spacing: 0) {
+                        if let builder = betweenListAndInputViewBuilder {
+                            builder()
+                        }
+                        inputView
+                    }
                 }
-                inputView
-            } else {
+
+                // If we need to show the "Waiting for network" banner we inject it
+                // via a *top* inset, pushing the content down just like the old
+                // implementation did.
+                .safeAreaInset(edge: .top) {
+                    if showNetworkConnectionProblem, !networkMonitor.isConnected {
+                        waitingForNetwork
+                    }
+                }
+
+                // Prevent the list from reacting to keyboard geometry changes
+                // while the context menu is shown – this preserves the library's
+                // existing behaviour.
+                .ignoresSafeArea(isShowingMenu ? .keyboard : [])
+
+        } else {
+            // Fallback to the original `VStack`-based layout when a caller
+            // explicitly requests the input view *above* the list.
+            VStack(spacing: 0) {
                 inputView
                 if let builder = betweenListAndInputViewBuilder {
                     builder()
                 }
                 listWithButton
             }
+            .ignoresSafeArea(isShowingMenu ? .keyboard : [])
         }
-        // Used to prevent ChatView movement during Emoji Keyboard invocation
-        .ignoresSafeArea(isShowingMenu ? .keyboard : [])
     }
 
     var waitingForNetwork: some View {
