@@ -284,7 +284,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var waitingForNetwork: some View {
-        VStack() {
+        VStack(spacing: 0) {
             Rectangle()
                 .foregroundColor(theme.colors.mainText.opacity(0.12))
                 .frame(height: 1)
@@ -526,11 +526,11 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                 if colorScheme == .dark {
                     backgroundDark
                         .resizable()
-                        .ignoresSafeArea(.keyboard)
+                        .ignoresSafeArea()
                 } else {
                     backgroundLight
                         .resizable()
-                        .ignoresSafeArea(.keyboard)
+                        .ignoresSafeArea()
                 }
 
             } else {
