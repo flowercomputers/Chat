@@ -256,7 +256,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var mainView: some View {
-        VStack {
+        VStack(spacing: 200) {
             if showNetworkConnectionProblem, !networkMonitor.isConnected {
                 waitingForNetwork
             }
@@ -280,7 +280,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var waitingForNetwork: some View {
-        VStack {
+        VStack(spacing: 200) {
             Rectangle()
                 .foregroundColor(theme.colors.mainText.opacity(0.12))
                 .frame(height: 1)
