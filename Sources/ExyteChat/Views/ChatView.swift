@@ -263,11 +263,18 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var mainView: some View {
+        // NOTE: Wrapping this VStack in a Scrollview produces a layout shift
+        // that is mostly incorrect, but starts to point at how this overall
+        // view is constructed. It causes the top toolbar area to look/feel how 
+        // I'd like it to, but the message area and footer/input bar are 
+        // squished to the top of the screen, leaving a bunch of empty space 
+        //at the bottom of the view.
+        // ScrollView { 
+
         // NOTE: editing this spacing to 0 explicitly helped
         // eliminate the gap betweem the input view and the message view. 
         // Still need to work through how to get the message list to extend 
         // "under" the input and top header toolbar area.
-        ScrollView { 
         VStack(spacing: 0) {
             if showNetworkConnectionProblem, !networkMonitor.isConnected {
                 waitingForNetwork
@@ -286,8 +293,8 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                 }
                 listWithButton
             }
-        }
-        }
+        //}
+        
         // Used to prevent ChatView movement during Emoji Keyboard invocation
         .ignoresSafeArea(isShowingMenu ? .keyboard : [])
     }
