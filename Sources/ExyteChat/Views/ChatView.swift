@@ -262,59 +262,32 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             }
     }
 
-    @ViewBuilder
     var mainView: some View {
-        // When the list should appear "behind" (i.e. under-scroll) the header and
-        // the bottom input area ‑ the common case for a conversation UI – we rely
-        // on `safeAreaInset` to overlay the auxiliary chrome instead of laying
-        // everything out in a `VStack`.  This allows the table view to take the
-        // whole screen height and scroll freely under the insets, exactly like
-        // Apple Messages.
+        // NOTE: editing this spacing to 0 explicitly helped
+        // eliminate the gap betweem the input view and the message view. 
+        // Still need to work through how to get the message list to extend 
+        // "under" the input and top header toolbar area.
+        VStack(spacing: 0) {
+            if showNetworkConnectionProblem, !networkMonitor.isConnected {
+                waitingForNetwork
+            }
 
-        if isListAboveInputView {
-            listWithButton
-                // Let the content flow under the navigation bar.
-                .ignoresSafeArea(edges: [.top])
-
-                // Overlay the bottom input (and an optional spacer view supplied
-                // by the host app) *on top* of the scrolling content while
-                // simultaneously reserving the needed bottom padding so that the
-                // last message is still fully visible when scrolled to the end.
-                .safeAreaInset(edge: .bottom) {
-                    VStack(spacing: 0) {
-                        if let builder = betweenListAndInputViewBuilder {
-                            builder()
-                        }
-                        inputView
-                    }
+            if isListAboveInputView {
+                listWithButton
+                if let builder = betweenListAndInputViewBuilder {
+                    builder()
                 }
-
-                // If we need to show the "Waiting for network" banner we inject it
-                // via a *top* inset, pushing the content down just like the old
-                // implementation did.
-                .safeAreaInset(edge: .top) {
-                    if showNetworkConnectionProblem, !networkMonitor.isConnected {
-                        waitingForNetwork
-                    }
-                }
-
-                // Prevent the list from reacting to keyboard geometry changes
-                // while the context menu is shown – this preserves the library's
-                // existing behaviour.
-                .ignoresSafeArea(isShowingMenu ? .keyboard : [])
-
-        } else {
-            // Fallback to the original `VStack`-based layout when a caller
-            // explicitly requests the input view *above* the list.
-            VStack(spacing: 0) {
+                inputView
+            } else {
                 inputView
                 if let builder = betweenListAndInputViewBuilder {
                     builder()
                 }
                 listWithButton
             }
-            .ignoresSafeArea(isShowingMenu ? .keyboard : [])
         }
+        // Used to prevent ChatView movement during Emoji Keyboard invocation
+        .ignoresSafeArea(isShowingMenu ? .keyboard : [])
     }
 
     var waitingForNetwork: some View {
@@ -393,17 +366,6 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             ids: ids,
             listSwipeActions: listSwipeActions
         )
-        // Starting with iOS 26 the default scroll-edge effect for tables was changed to
-        // `.expand`, which produces a full-screen blur when the user over-scrolls.  For
-        // chat UIs this feels wrong and, in our case, practically hides everything.
-        // We explicitly revert to the familiar glow effect when the API is available.
-        .applyIf(true) { view in
-            if #available(iOS 26.0, *) {
-                view.scrollEdgeEffectStyle(.soft, for: .vertical)
-            } else {
-                view
-            }
-        }
         .applyIf(!isScrollEnabled) {
             $0.frame(height: tableContentHeight)
         }
