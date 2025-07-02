@@ -256,7 +256,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var mainView: some View {
-        VStack(spacing: 200) {
+        VStack(spacing: 0) {
             if showNetworkConnectionProblem, !networkMonitor.isConnected {
                 waitingForNetwork
             }
