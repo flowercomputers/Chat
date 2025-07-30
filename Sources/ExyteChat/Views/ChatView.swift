@@ -332,7 +332,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                         .foregroundStyle(Color(UIColor.label))
                         .clipShape(Circle())
                         .shadow(color: colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.06), radius: 6, x: 1, y: 5)
-                        .glassEffect(.regular.interactive()
+                        .glassEffect(.regular.interactive())
                         //.modifier(GlassEffectIfAvailable())
                 }
                 .padding(8)
