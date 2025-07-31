@@ -332,8 +332,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                         .foregroundStyle(Color(UIColor.label))
                         .clipShape(Circle())
                         .shadow(color: colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.06), radius: 6, x: 1, y: 5)
-                        // .glassEffect(.regular.interactive())
-                        .modifier(GlassEffectIfAvailable())
+                        .glassEffect(.regular.interactive())
                 }
                 .padding(8)
                 .opacity(isScrolledToBottom ? 0 : 1)  // Animate opacity
@@ -760,27 +759,5 @@ extension ChatView {
             shouldShowOverview: shouldShowOverviewFor
         )
         return view
-    }
-}
-
-private struct GlassEffectIfAvailable: ViewModifier {
-    func body(content: Content) -> some View {
-        // The .glassEffect(_:) modifier is only available starting with iOS 26.
-        // Trying to reference it when building with an older SDK results in
-        // compiler errors (the method simply doesn’t exist). To keep the
-        // project compiling on current SDKs while still allowing us to adopt
-        // the effect in the future, we fall back to returning the unmodified
-        // content for now. When Xcode ships with the required API we can
-        // re-enable the call inside the availability block.
-
-        #if swift(>=6.0)
-        if #available(iOS 26.0, *) {
-            content.glassEffect(.regular.interactive())
-        } else {
-            content
-        }
-        #else
-        content
-        #endif
     }
 }
