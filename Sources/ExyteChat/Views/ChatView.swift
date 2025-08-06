@@ -174,7 +174,14 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
 
     public var body: some View {
         mainView
-            .background(chatBackground())
+            // NOTE: This background appears to set the color of the surface that the
+            // message list rests atop of. Strangely, with the way Excyte is structured,
+            // This background is affecting the color of the top toolbar area, and the footer!
+            // Roughly, it seems like the header, message area, and footer, are part of something
+            // like a VStack, so they lie "next" to one another on the same place, which isn't
+            // what we want! We're trying to get a similar feeling as Apple Messages, where
+            // the content flows "under" the top toolbar area, and the footer.
+            .background(Color.clear)
             .environmentObject(keyboardState)
 
             .fullScreenCover(isPresented: $viewModel.fullscreenAttachmentPresented) {
@@ -256,7 +263,18 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var mainView: some View {
-        VStack {
+        // NOTE: Wrapping this VStack in a Scrollview produces a layout shift
+        // that is mostly incorrect, but starts to point at how this overall
+        // view is constructed. It causes the top toolbar area to look/feel how 
+        // I'd like it to, but the message area and footer/input bar are 
+        // squished to the top of the screen, leaving a bunch of empty space 
+        //at the bottom of the view.
+
+        // NOTE: editing this spacing to 0 explicitly helped
+        // eliminate the gap betweem the input view and the message view. 
+        // Still need to work through how to get the message list to extend 
+        // "under" the input and top header toolbar area.
+        VStack(spacing: 0) {
             if showNetworkConnectionProblem, !networkMonitor.isConnected {
                 waitingForNetwork
             }
@@ -280,7 +298,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     }
 
     var waitingForNetwork: some View {
-        VStack {
+        VStack(spacing: 0) {
             Rectangle()
                 .foregroundColor(theme.colors.mainText.opacity(0.12))
                 .frame(height: 1)
@@ -304,7 +322,6 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
         case .conversation:
             ZStack(alignment: .bottom) {
                 list
-
                 // Button is always present, opacity controlled by state
                 Button {
                     NotificationCenter.default.post(name: .onScrollToBottom, object: nil)
@@ -313,14 +330,9 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                     theme.images.scrollToBottom
                         .frame(width: 44, height: 44)
                         .foregroundStyle(Color(UIColor.label))
-                        .background(.thinMaterial)
                         .clipShape(Circle())
-                        .overlay(
-                            Circle()
-                                .stroke(Color.primary.opacity(0.12), lineWidth: 0.6)
-                        )
                         .shadow(color: colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.06), radius: 6, x: 1, y: 5)
-                        // .modifier(GlassEffectIfAvailable())
+                        .glassEffectIfAvailable()
                 }
                 .padding(8)
                 .opacity(isScrolledToBottom ? 0 : 1)  // Animate opacity
@@ -527,11 +539,11 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                 if colorScheme == .dark {
                     backgroundDark
                         .resizable()
-                        .ignoresSafeArea(.keyboard)
+                        .ignoresSafeArea()
                 } else {
                     backgroundLight
                         .resizable()
-                        .ignoresSafeArea(.keyboard)
+                        .ignoresSafeArea()
                 }
 
             } else {
@@ -750,12 +762,19 @@ extension ChatView {
     }
 }
 
-// private struct GlassEffectIfAvailable: ViewModifier {
-//     func body(content: Content) -> some View {
-//         if #available(iOS 26.0, *) {
-//             content.glassEffect(.regular.interactive())
-//         } else {
-//             content
-//         }
-//     }
-// }
+// Glass effect modifier for iOS 26+
+struct GlassEffectModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content.glassEffect(.regular.interactive())
+        } else {
+            content
+        }
+    }
+}
+
+extension View {    
+    func glassEffectIfAvailable() -> some View {
+        self.modifier(GlassEffectModifier())
+    }
+}
