@@ -332,7 +332,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                         .foregroundStyle(Color(UIColor.label))
                         .clipShape(Circle())
                         .shadow(color: colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.06), radius: 6, x: 1, y: 5)
-                        .glassEffectIfAvailable()
+                        // .glassEffectIfAvailable()
                 }
                 .padding(8)
                 .opacity(isScrolledToBottom ? 0 : 1)  // Animate opacity
@@ -763,18 +763,18 @@ extension ChatView {
 }
 
 // Glass effect modifier for iOS 26+
-struct GlassEffectModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content.glassEffect(.regular.interactive())
-        } else {
-            content
-        }
-    }
-}
+// struct GlassEffectModifier: ViewModifier {
+//     func body(content: Content) -> some View {
+//         if #available(iOS 26.0, *) {
+//             content.glassEffect(.regular.interactive())
+//         } else {
+//             content
+//         }
+//     }
+// }
 
-extension View {    
-    func glassEffectIfAvailable() -> some View {
-        self.modifier(GlassEffectModifier())
-    }
-}
+// extension View {    
+//     func glassEffectIfAvailable() -> some View {
+//         self.modifier(GlassEffectModifier())
+//     }
+// }
